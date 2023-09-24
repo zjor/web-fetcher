@@ -3,6 +3,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.1.4</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
     <groupId>com.github.zjor</groupId>
     <artifactId>web-fetcher</artifactId>
     <version>1.0-SNAPSHOT</version>
@@ -14,7 +21,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <lombok.version>1.18.26</lombok.version>
-        <vertx.version>4.4.5</vertx.version>
+        <java.version>17</java.version>
     </properties>
 
     <dependencies>
@@ -30,29 +37,18 @@
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.7.36</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
             <version>4.12.0</version>
         </dependency>
-
         <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-core</artifactId>
-            <version>${vertx.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-web</artifactId>
-            <version>${vertx.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.2</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -68,25 +64,12 @@
                     <target>17</target>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>io.reactiverse</groupId>
-                <artifactId>vertx-maven-plugin</artifactId>
-                <version>1.0.28</version>
-                <executions>
-                    <execution>
-                        <id>vmp</id>
-                        <goals>
-                            <goal>initialize</goal>
-                            <goal>package</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <verticle>com.github.zjor.webfetcher.MainVerticle</verticle>
-                    <redeploy>true</redeploy>
-                </configuration>
-            </plugin>
+            <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                </plugin>
+            </plugins>
 
         </plugins>
     </build>
