@@ -1,5 +1,9 @@
 package com.github.zjor.webfetcher.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.github.zjor.webfetcher.enumeration.RequestStatus;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,12 +16,19 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Status {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class Request {
 
+    @NotNull
     private UUID requestId;
-    private StatusState status;
+    private RequestStatus status;
     private String downloadUrl;
     private Error error;
+
+    @JsonIgnore
+    private String urlToDownload;
+    @JsonIgnore
+    private String webHookUrl;
 
     @Data
     @Builder

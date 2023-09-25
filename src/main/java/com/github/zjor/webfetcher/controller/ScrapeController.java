@@ -1,9 +1,9 @@
 package com.github.zjor.webfetcher.controller;
 
 
+import com.github.zjor.webfetcher.dto.Request;
 import com.github.zjor.webfetcher.dto.ScrapeRequest;
 import com.github.zjor.webfetcher.dto.ScrapeResponse;
-import com.github.zjor.webfetcher.dto.Status;
 import com.github.zjor.webfetcher.service.ScrapeService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -24,8 +24,8 @@ public record ScrapeController(ScrapeService service) {
     }
 
     @PostMapping("/{requestId}/status")
-    public ResponseEntity<Status> status(@PathVariable UUID requestId,
-                                         @RequestParam(required = false) int poll) {
+    public ResponseEntity<Request> status(@PathVariable UUID requestId,
+                                          @RequestParam(required = false) int poll) {
         log.info("Received status request with requestId {} and poll {}", requestId, poll);
         return ResponseEntity.ok(service.getStatus(requestId, poll));
     }

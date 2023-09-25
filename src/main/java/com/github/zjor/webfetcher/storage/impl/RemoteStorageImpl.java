@@ -1,17 +1,15 @@
 package com.github.zjor.webfetcher.storage.impl;
 
-import com.github.zjor.webfetcher.storage.StorageStrategy;
+import com.github.zjor.webfetcher.storage.StorageLocation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Slf4j
 @Service
-public class RemoteStorageImpl implements StorageStrategy {
+public class RemoteStorageImpl implements StorageLocation {
 
     @Override
-    public void store(UUID id, byte[] fileData) {
+    public void store(String filename, byte[] fileData) {
         log.debug("Saved to a remote target");
     }
 }

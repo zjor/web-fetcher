@@ -21,7 +21,7 @@ public class Driver implements AutoCloseable {
     private final RemoteWebDriver webDriver;
 
     @SneakyThrows
-    public static Driver DriverBuilder(ScrapeProperty property) {
+    public static Driver driverBuilder(ScrapeProperty property) {
         var options = new ChromeOptions();
         options.addArguments("--headless=" + property.driver().headless());
 
