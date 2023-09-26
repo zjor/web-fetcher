@@ -12,7 +12,7 @@ import java.io.IOException;
 @Slf4j
 @Service
 @Primary
-public record LocalFileSystemImpl() implements StorageLocation {
+public class LocalFileSystemImpl implements StorageLocation {
 
     @Override
     @SneakyThrows

@@ -6,6 +6,7 @@ import com.github.zjor.webfetcher.dto.ScrapeRequest;
 import com.github.zjor.webfetcher.dto.ScrapeResponse;
 import com.github.zjor.webfetcher.service.ScrapeService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,8 +15,11 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/scraper")
-public record ScrapeController(ScrapeService service) {
+public class ScrapeController {
+
+    private final ScrapeService service;
 
     @PostMapping("/submit")
     public ResponseEntity<ScrapeResponse> submit(@RequestBody @Valid ScrapeRequest request) {

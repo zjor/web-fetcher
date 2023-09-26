@@ -1,6 +1,7 @@
 package com.github.zjor.webfetcher.client;
 
 import com.github.zjor.webfetcher.dto.Request;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -13,8 +14,10 @@ import java.util.Optional;
 
 @Slf4j
 @Component
-public record Client(RestTemplate restTemplate) {
+@RequiredArgsConstructor
+public class Client {
 
+    private final RestTemplate restTemplate;
 
     public ResponseEntity<String> sendPostRequest(String url, Request requestBody) {
         HttpHeaders headers = new HttpHeaders();

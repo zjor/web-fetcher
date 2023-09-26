@@ -1,7 +1,6 @@
 package com.github.zjor.webfetcher.service.impl;
 
 
-import com.github.zjor.webfetcher.client.Client;
 import com.github.zjor.webfetcher.db.RequestStorage;
 import com.github.zjor.webfetcher.driver.Driver;
 import com.github.zjor.webfetcher.dto.Request;
@@ -12,6 +11,7 @@ import com.github.zjor.webfetcher.notification.editor.Editor;
 import com.github.zjor.webfetcher.property.ScrapeProperty;
 import com.github.zjor.webfetcher.service.ScrapeService;
 import com.github.zjor.webfetcher.storage.StorageLocation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -23,11 +23,13 @@ import java.util.UUID;
 
 @Slf4j
 @Service
-public record ScrapeServiceImpl(ScrapeProperty property,
-                                StorageLocation storageLocation,
-                                Client client,
-                                RequestStorage requestStorage,
-                                Editor editor) implements ScrapeService {
+@RequiredArgsConstructor
+public class ScrapeServiceImpl implements ScrapeService {
+
+    private final ScrapeProperty property;
+    private final StorageLocation storageLocation;
+    private final RequestStorage requestStorage;
+    private final Editor editor;
 
     @Override
     public ScrapeResponse submit(ScrapeRequest apiRequest) {
