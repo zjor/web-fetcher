@@ -13,6 +13,7 @@ import com.github.zjor.webfetcher.service.ScrapeService;
 import com.github.zjor.webfetcher.storage.StorageLocation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.NotFoundException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -64,7 +65,7 @@ public class ScrapeServiceImpl implements ScrapeService {
                                         .message(e.getMessage())
                                         .build());
                                 editor.changeStatus(RequestStatus.failed, requestToProcess);
-                                log.error("Something went wrong");
+                                log.error("Something went wrong when fetching the page source");
 
                             } finally {
                                 var end = Instant.now();
@@ -84,7 +85,19 @@ public class ScrapeServiceImpl implements ScrapeService {
     }
 
     @Override
-    public Request getStatus(UUID requestId, int poll) {
-        return null;
+    public Request getStatus(UUID requestId, Integer poll) {
+        var request = Optional.ofNullable(requestStorage.getRequest(requestId))
+                .orElseThrow(() -> new NotFoundException(String.valueOf(requestId)));
+        Optional.ofNullable(poll)
+                .filter(p -> request.getStatus().equals(RequestStatus.processing))
+                .ifPresent(seconds -> {
+                    try {
+                        log.info("Request id {} is in processing. Waiting {} seconds", request.getRequestId(), seconds);
+                        Thread.sleep(seconds * 1000);
+                    } catch (InterruptedException e) {
+                        log.error("Something went wrong when executing poll waiting");
+                    }
+                });
+        return request;
     }
 }

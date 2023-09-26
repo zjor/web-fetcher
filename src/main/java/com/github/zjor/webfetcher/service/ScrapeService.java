@@ -9,7 +9,7 @@ import java.util.UUID;
 public interface ScrapeService {
     ScrapeResponse submit(ScrapeRequest request);
 
-    Request getStatus(UUID requestId, int poll);
+    Request getStatus(UUID requestId, Integer poll);
 
     void scrape();
 }
