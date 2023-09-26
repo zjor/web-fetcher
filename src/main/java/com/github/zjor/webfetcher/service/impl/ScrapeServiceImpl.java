@@ -86,8 +86,7 @@ public class ScrapeServiceImpl implements ScrapeService {
 
     @Override
     public Request getStatus(UUID requestId, Integer poll) {
-        var request = Optional.ofNullable(requestStorage.getRequest(requestId))
-                .orElseThrow(() -> new NotFoundException(String.valueOf(requestId)));
+        var request = findRequest(requestId);
         Optional.ofNullable(poll)
                 .filter(p -> request.getStatus().equals(RequestStatus.processing))
                 .ifPresent(seconds -> {
@@ -99,5 +98,16 @@ public class ScrapeServiceImpl implements ScrapeService {
                     }
                 });
         return request;
+    }
+
+    private Request findRequest(UUID requestId) {
+        return Optional.ofNullable(requestStorage.getRequest(requestId))
+                .orElseThrow(() -> new NotFoundException(String.valueOf(requestId)));
+    }
+
+    @Override
+    public Request getContent(UUID requestId) {
+        var request = findRequest(requestId);
+        return null;
     }
 }

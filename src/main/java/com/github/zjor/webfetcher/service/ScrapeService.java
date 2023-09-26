@@ -11,5 +11,7 @@ public interface ScrapeService {
 
     Request getStatus(UUID requestId, Integer poll);
 
+    Request getContent(UUID requestId);
+
     void scrape();
 }

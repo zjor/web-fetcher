@@ -27,11 +27,16 @@ public class ScrapeController {
         return ResponseEntity.ok(service.submit(request));
     }
 
-    @GetMapping("/id/{id}/status")
-    public ResponseEntity<Request> status(@PathVariable UUID id,
+    @GetMapping("/id/{requestId}/status")
+    public ResponseEntity<Request> status(@PathVariable UUID requestId,
                                           @RequestParam(required = false) Integer poll) {
-        log.info("Received status request with requestId {} and poll {}", id, poll);
-        return ResponseEntity.ok(service.getStatus(id, poll));
+        log.info("Received status request with requestId {} and poll {}", requestId, poll);
+        return ResponseEntity.ok(service.getStatus(requestId, poll));
     }
 
+    @GetMapping("/id/{requestId}/content")
+    public ResponseEntity<Request> content(@PathVariable UUID requestId) {
+        log.info("Received status request with requestId {}", requestId);
+        return ResponseEntity.ok(service.getContent(requestId));
+    }
 }
