@@ -3,10 +3,10 @@ package com.github.zjor.webfetcher.service;
 
 import com.github.zjor.webfetcher.db.RequestStorage;
 import com.github.zjor.webfetcher.dto.Request;
-import com.github.zjor.webfetcher.dto.ScrapeRequest;
+import com.github.zjor.webfetcher.dto.ScraperRequest;
 import com.github.zjor.webfetcher.notification.editor.Editor;
 import com.github.zjor.webfetcher.property.ScrapeProperty;
-import com.github.zjor.webfetcher.service.impl.ScrapeServiceImpl;
+import com.github.zjor.webfetcher.service.impl.ScraperServiceImpl;
 import com.github.zjor.webfetcher.storage.StorageLocation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,14 +33,14 @@ class ScrapeServiceTest {
     private RequestStorage requestStorage;
     @Mock
     private Editor editor;
-    private ScrapeService scrapeService;
+    private ScraperService scraperService;
     private static final String WEBHOOK_URL = "https://www.my-service.com/callback";
     private static final String URL = "https://www.amazon.com";
     private static final UUID ID = UUID.randomUUID();
 
     @BeforeEach
     void setup() {
-        scrapeService = new ScrapeServiceImpl(scrapeProperty,
+        scraperService = new ScraperServiceImpl(scrapeProperty,
                 storageLocation,
                 requestStorage,
                 editor);
@@ -50,7 +50,7 @@ class ScrapeServiceTest {
     void submitTest() {
         var apiRequest = mockApiRequest();
 
-        var actualRequest = scrapeService.submit(apiRequest);
+        var actualRequest = scraperService.submit(apiRequest);
         var requestId = actualRequest.getRequestId();
 
         verify(requestStorage, times(1)).addRequest(any(Request.class));
@@ -71,8 +71,8 @@ class ScrapeServiceTest {
                 .build();
     }
 
-    private ScrapeRequest mockApiRequest() {
-        return ScrapeRequest.builder()
+    private ScraperRequest mockApiRequest() {
+        return ScraperRequest.builder()
                 .url(URL)
                 .webhookUrl(WEBHOOK_URL)
                 .build();

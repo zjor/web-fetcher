@@ -2,9 +2,9 @@ package com.github.zjor.webfetcher.controller;
 
 
 import com.github.zjor.webfetcher.dto.Request;
-import com.github.zjor.webfetcher.dto.ScrapeRequest;
-import com.github.zjor.webfetcher.dto.ScrapeResponse;
-import com.github.zjor.webfetcher.service.ScrapeService;
+import com.github.zjor.webfetcher.dto.ScraperRequest;
+import com.github.zjor.webfetcher.dto.ScraperResponse;
+import com.github.zjor.webfetcher.service.ScraperService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,12 +17,12 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/scraper")
-public class ScrapeController {
+public class ScraperController {
 
-    private final ScrapeService service;
+    private final ScraperService service;
 
     @PostMapping("/submit")
-    public ResponseEntity<ScrapeResponse> submit(@RequestBody @Valid ScrapeRequest request) {
+    public ResponseEntity<ScraperResponse> submit(@RequestBody @Valid ScraperRequest request) {
         log.info("Received submit request {}", request);
         return ResponseEntity.ok(service.submit(request));
     }

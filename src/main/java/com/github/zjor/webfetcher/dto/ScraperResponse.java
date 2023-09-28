@@ -11,6 +11,6 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ScrapeResponse {
+public class ScraperResponse {
     private UUID requestId;
 }

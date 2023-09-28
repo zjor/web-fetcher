@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ScrapeRequest {
+public class ScraperRequest {
     @NotEmpty
     private String url;
     private String webhookUrl;

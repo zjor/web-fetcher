@@ -4,12 +4,12 @@ package com.github.zjor.webfetcher.service.impl;
 import com.github.zjor.webfetcher.db.RequestStorage;
 import com.github.zjor.webfetcher.driver.Driver;
 import com.github.zjor.webfetcher.dto.Request;
-import com.github.zjor.webfetcher.dto.ScrapeRequest;
-import com.github.zjor.webfetcher.dto.ScrapeResponse;
+import com.github.zjor.webfetcher.dto.ScraperRequest;
+import com.github.zjor.webfetcher.dto.ScraperResponse;
 import com.github.zjor.webfetcher.enumeration.RequestStatus;
 import com.github.zjor.webfetcher.notification.editor.Editor;
 import com.github.zjor.webfetcher.property.ScrapeProperty;
-import com.github.zjor.webfetcher.service.ScrapeService;
+import com.github.zjor.webfetcher.service.ScraperService;
 import com.github.zjor.webfetcher.storage.StorageLocation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ScrapeServiceImpl implements ScrapeService {
+public class ScraperServiceImpl implements ScraperService {
 
     private final ScrapeProperty property;
     private final StorageLocation storageLocation;
@@ -33,12 +33,12 @@ public class ScrapeServiceImpl implements ScrapeService {
     private final Editor editor;
 
     @Override
-    public ScrapeResponse submit(ScrapeRequest apiRequest) {
+    public ScraperResponse submit(ScraperRequest apiRequest) {
         var id = UUID.randomUUID(); // TODO hashids
 
         placeToMemoryStorage(id, apiRequest);
 
-        return ScrapeResponse.builder()
+        return ScraperResponse.builder()
                 .requestId(id)
                 .build();
     }
@@ -75,7 +75,7 @@ public class ScrapeServiceImpl implements ScrapeService {
                 );
     }
 
-    private void placeToMemoryStorage(UUID id, ScrapeRequest apiRequest) {
+    private void placeToMemoryStorage(UUID id, ScraperRequest apiRequest) {
         var request = Request.builder()
                 .requestId(id)
                 .urlToDownload(apiRequest.getUrl())
