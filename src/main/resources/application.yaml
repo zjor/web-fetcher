@@ -3,3 +3,5 @@ scraper:
   driver:
     url: http://localhost:4444/wd/hub
     headless: true
+  schedule:
+    delay: 1
