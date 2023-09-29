@@ -1,6 +1,7 @@
 package com.github.zjor.webfetcher.controller;
 
 
+import com.github.zjor.webfetcher.dto.ContentResponse;
 import com.github.zjor.webfetcher.dto.Request;
 import com.github.zjor.webfetcher.dto.ScraperRequest;
 import com.github.zjor.webfetcher.dto.ScraperResponse;
@@ -35,7 +36,7 @@ public class ScraperController {
     }
 
     @GetMapping("/id/{requestId}/content")
-    public ResponseEntity<Request> content(@PathVariable UUID requestId) {
+    public ResponseEntity<ContentResponse> content(@PathVariable UUID requestId) {
         log.info("Received status request with requestId {}", requestId);
         return ResponseEntity.ok(service.getContent(requestId));
     }
