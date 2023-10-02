@@ -32,8 +32,7 @@ public class QueueServiceImpl implements QueueService {
             var filename = String.format("%s.html", request.getRequestId());
             var source = driver.fetchPageSource(request.getUrlToDownload());
 
-            bucketService.uploadFile(filename, source.getBytes());
-            request.setDownloadUrl(filename);
+            request.setDownloadUrl(bucketService.uploadFile(filename, source.getBytes()));
             editor.changeStatus(RequestStatus.ready, request);
 
         } catch (Exception e) {
