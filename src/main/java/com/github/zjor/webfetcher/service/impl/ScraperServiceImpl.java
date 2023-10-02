@@ -2,7 +2,6 @@ package com.github.zjor.webfetcher.service.impl;
 
 
 import com.github.zjor.webfetcher.db.RequestStorage;
-import com.github.zjor.webfetcher.dto.ContentResponse;
 import com.github.zjor.webfetcher.dto.Request;
 import com.github.zjor.webfetcher.dto.ScraperRequest;
 import com.github.zjor.webfetcher.dto.ScraperResponse;
@@ -57,14 +56,6 @@ public class ScraperServiceImpl implements ScraperService {
         thread.start();
     }
 
-    private void addToMemoryStorage(UUID id, ScraperRequest apiRequest) {
-        requestStorage.addRequest(Request.builder()
-                .requestId(id)
-                .urlToDownload(apiRequest.getUrl())
-                .webHookUrl(apiRequest.getWebhookUrl())
-                .build());
-    }
-
     @Override
     public Request getStatus(UUID requestId, Integer poll) {
         var request = findRequest(requestId);
@@ -81,23 +72,27 @@ public class ScraperServiceImpl implements ScraperService {
         return request;
     }
 
+    @Override
+    @SneakyThrows
+    public String getContent(UUID requestId) {
+        var request = findRequest(requestId);
+        if (!request.getStatus().equals(RequestStatus.ready)) {
+            return StringUtil.EMPTY_STRING;
+        }
+        var contentBytes = bucketService.downloadFile(request.getDownloadUrl());
+        return new String(contentBytes, StandardCharsets.UTF_8);
+    }
+
     private Request findRequest(UUID requestId) {
         return Optional.ofNullable(requestStorage.getRequest(requestId))
                 .orElseThrow(() -> new NotFoundException(String.valueOf(requestId)));
     }
 
-    @Override
-    @SneakyThrows
-    public ContentResponse getContent(UUID requestId) {
-        var request = findRequest(requestId);
-        String content = StringUtil.EMPTY_STRING;
-        if (request.getStatus().equals(RequestStatus.ready)) {
-            var contentBytes = bucketService.downloadFile(request.getDownloadUrl());
-            content = new String(contentBytes, StandardCharsets.UTF_8);
-        }
-        return ContentResponse.builder()
-                .requestId(requestId)
-                .content(content)
-                .build();
+    private void addToMemoryStorage(UUID id, ScraperRequest apiRequest) {
+        requestStorage.addRequest(Request.builder()
+                .requestId(id)
+                .urlToDownload(apiRequest.getUrl())
+                .webHookUrl(apiRequest.getWebhookUrl())
+                .build());
     }
 }
