@@ -91,6 +91,7 @@ public class ScraperServiceImpl implements ScraperService {
     private void addToMemoryStorage(UUID id, ScraperRequest apiRequest) {
         requestStorage.addRequest(Request.builder()
                 .requestId(id)
+                .status(RequestStatus.pending)
                 .urlToDownload(apiRequest.getUrl())
                 .webHookUrl(apiRequest.getWebhookUrl())
                 .build());
