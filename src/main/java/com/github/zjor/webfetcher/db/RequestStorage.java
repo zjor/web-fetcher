@@ -12,6 +12,10 @@ public class RequestStorage {
     private final Map<UUID, Request> requestDb = new HashMap<>();
     private final Queue<UUID> requestQueue = new LinkedList<>();
 
+    public boolean isEmptyQueue() {
+       return requestQueue.isEmpty();
+    }
+
     public void addRequest(@Valid Request newRequest) {
         requestDb.put(newRequest.getRequestId(), newRequest);
         requestQueue.add(newRequest.getRequestId());

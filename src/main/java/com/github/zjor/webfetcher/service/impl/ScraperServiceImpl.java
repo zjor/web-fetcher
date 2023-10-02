@@ -2,23 +2,23 @@ package com.github.zjor.webfetcher.service.impl;
 
 
 import com.github.zjor.webfetcher.db.RequestStorage;
-import com.github.zjor.webfetcher.driver.Driver;
+import com.github.zjor.webfetcher.dto.ContentResponse;
 import com.github.zjor.webfetcher.dto.Request;
 import com.github.zjor.webfetcher.dto.ScraperRequest;
 import com.github.zjor.webfetcher.dto.ScraperResponse;
 import com.github.zjor.webfetcher.enumeration.RequestStatus;
-import com.github.zjor.webfetcher.notification.editor.Editor;
-import com.github.zjor.webfetcher.property.ScrapeProperty;
+import com.github.zjor.webfetcher.service.BucketService;
+import com.github.zjor.webfetcher.service.QueueService;
 import com.github.zjor.webfetcher.service.ScraperService;
-import com.github.zjor.webfetcher.storage.StorageLocation;
+import io.netty.util.internal.StringUtil;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.NotFoundException;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
-import java.time.Instant;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,16 +27,15 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ScraperServiceImpl implements ScraperService {
 
-    private final ScrapeProperty property;
-    private final StorageLocation storageLocation;
+    private final BucketService bucketService;
     private final RequestStorage requestStorage;
-    private final Editor editor;
+    private final QueueService queueService;
 
     @Override
     public ScraperResponse submit(ScraperRequest apiRequest) {
         var id = UUID.randomUUID(); // TODO hashids
 
-        placeToMemoryStorage(id, apiRequest);
+        addToMemoryStorage(id, apiRequest);
 
         return ScraperResponse.builder()
                 .requestId(id)
@@ -44,44 +43,26 @@ public class ScraperServiceImpl implements ScraperService {
     }
 
     @Override
-    @Scheduled(fixedDelayString = "${scraper.schedule.delay}000")
+    @PostConstruct
     public void scrape() {
-        Optional.ofNullable(requestStorage.getNext())
-                .ifPresent(requestToProcess -> {
-                            editor.changeStatus(RequestStatus.processing, requestToProcess);
-                            var start = Instant.now();
-
-                            try (var driver = Driver.driverBuilder(property)) {
-                                var filename = String.format("%s/%s.html", property.sourceFilePath(), requestToProcess.getRequestId());
-                                var source = driver.fetchPageSource(requestToProcess.getUrlToDownload());
-
-                                storageLocation.store(filename, source.getBytes());
-                                requestToProcess.setDownloadUrl(filename);
-                                editor.changeStatus(RequestStatus.ready, requestToProcess);
-
-                            } catch (Exception e) {
-                                requestToProcess.setError(Request.Error.builder()
-                                        .code("BAD_URL")
-                                        .message(e.getMessage())
-                                        .build());
-                                editor.changeStatus(RequestStatus.failed, requestToProcess);
-                                log.error("Something went wrong when fetching the page source");
-
-                            } finally {
-                                var end = Instant.now();
-                                log.info("Elapsed time: {} seconds", Duration.between(start, end).toSeconds());
-                            }
-                        }
-                );
+        var thread = new Thread(() -> {
+            while (true) {
+                if (!requestStorage.isEmptyQueue()) {
+                    Optional.ofNullable(requestStorage.getNext())
+                            .ifPresent(queueService::processRequest);
+                }
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
     }
 
-    private void placeToMemoryStorage(UUID id, ScraperRequest apiRequest) {
-        var request = Request.builder()
+    private void addToMemoryStorage(UUID id, ScraperRequest apiRequest) {
+        requestStorage.addRequest(Request.builder()
                 .requestId(id)
                 .urlToDownload(apiRequest.getUrl())
                 .webHookUrl(apiRequest.getWebhookUrl())
-                .build();
-        requestStorage.addRequest(request);
+                .build());
     }
 
     @Override
@@ -106,8 +87,17 @@ public class ScraperServiceImpl implements ScraperService {
     }
 
     @Override
-    public Request getContent(UUID requestId) {
+    @SneakyThrows
+    public ContentResponse getContent(UUID requestId) {
         var request = findRequest(requestId);
-        return null;
+        String content = StringUtil.EMPTY_STRING;
+        if (request.getStatus().equals(RequestStatus.ready)) {
+            var contentBytes = bucketService.downloadFile(request.getDownloadUrl());
+            content = new String(contentBytes, StandardCharsets.UTF_8);
+        }
+        return ContentResponse.builder()
+                .requestId(requestId)
+                .content(content)
+                .build();
     }
 }

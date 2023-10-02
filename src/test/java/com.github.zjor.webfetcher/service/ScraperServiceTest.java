@@ -4,10 +4,7 @@ package com.github.zjor.webfetcher.service;
 import com.github.zjor.webfetcher.db.RequestStorage;
 import com.github.zjor.webfetcher.dto.Request;
 import com.github.zjor.webfetcher.dto.ScraperRequest;
-import com.github.zjor.webfetcher.notification.editor.Editor;
-import com.github.zjor.webfetcher.property.ScrapeProperty;
 import com.github.zjor.webfetcher.service.impl.ScraperServiceImpl;
-import com.github.zjor.webfetcher.storage.StorageLocation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,33 +21,30 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class ScrapeServiceTest {
+class ScraperServiceTest {
     @Mock
-    private ScrapeProperty scrapeProperty;
+    private BucketService bucketService;
     @Mock
-    private StorageLocation storageLocation;
+    private QueueService queueService;
     @Spy
     private RequestStorage requestStorage;
-    @Mock
-    private Editor editor;
-    private ScraperService scraperService;
+    private ScraperService scrapeService;
     private static final String WEBHOOK_URL = "https://www.my-service.com/callback";
     private static final String URL = "https://www.amazon.com";
     private static final UUID ID = UUID.randomUUID();
 
     @BeforeEach
     void setup() {
-        scraperService = new ScraperServiceImpl(scrapeProperty,
-                storageLocation,
+        scrapeService = new ScraperServiceImpl(bucketService,
                 requestStorage,
-                editor);
+                queueService);
     }
 
     @Test
     void submitTest() {
         var apiRequest = mockApiRequest();
 
-        var actualRequest = scraperService.submit(apiRequest);
+        var actualRequest = scrapeService.submit(apiRequest);
         var requestId = actualRequest.getRequestId();
 
         verify(requestStorage, times(1)).addRequest(any(Request.class));

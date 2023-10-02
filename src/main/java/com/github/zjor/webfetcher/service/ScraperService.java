@@ -1,5 +1,6 @@
 package com.github.zjor.webfetcher.service;
 
+import com.github.zjor.webfetcher.dto.ContentResponse;
 import com.github.zjor.webfetcher.dto.Request;
 import com.github.zjor.webfetcher.dto.ScraperRequest;
 import com.github.zjor.webfetcher.dto.ScraperResponse;
@@ -11,7 +12,7 @@ public interface ScraperService {
 
     Request getStatus(UUID requestId, Integer poll);
 
-    Request getContent(UUID requestId);
+    ContentResponse getContent(UUID requestId);
 
     void scrape();
 }
