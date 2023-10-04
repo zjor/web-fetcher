@@ -1,7 +1,6 @@
 package com.github.zjor.webfetcher.controller;
 
 
-import com.github.zjor.webfetcher.dto.ContentResponse;
 import com.github.zjor.webfetcher.dto.Request;
 import com.github.zjor.webfetcher.dto.ScraperRequest;
 import com.github.zjor.webfetcher.dto.ScraperResponse;
@@ -9,6 +8,7 @@ import com.github.zjor.webfetcher.service.ScraperService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,8 +35,8 @@ public class ScraperController {
         return ResponseEntity.ok(service.getStatus(requestId, poll));
     }
 
-    @GetMapping("/id/{requestId}/content")
-    public ResponseEntity<ContentResponse> content(@PathVariable UUID requestId) {
+    @GetMapping(value = "/id/{requestId}/content", produces = MediaType.TEXT_HTML_VALUE)
+    public ResponseEntity<String> content(@PathVariable UUID requestId) {
         log.info("Received status request with requestId {}", requestId);
         return ResponseEntity.ok(service.getContent(requestId));
     }

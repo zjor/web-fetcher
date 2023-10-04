@@ -29,12 +29,25 @@ public class BucketServiceImpl implements BucketService {
 
     @Override
     @SneakyThrows
-    public void uploadFile(String objectName, byte[] bytes) {
+    public String uploadFile(String objectName, byte[] bytes) {
+        upload(objectName, bytes);
+        return getDownloadUrl(objectName);
+    }
+
+    private String getDownloadUrl(String objectName) {
+        try {
+            return b2StorageClient.getDownloadByNameUrl(bucketName, objectName);
+        } catch (B2Exception exception) {
+            throw new RuntimeException("Error getting download url for file {} from bucket - {}" + objectName + exception.getMessage());
+        }
+    }
+
+    void upload(String objectName, byte[] bytes) {
         var contentSource = B2ByteArrayContentSource
                 .builder(bytes)
                 .build();
         try {
-            b2StorageClient.uploadSmallFile(B2UploadFileRequest.builder(bucketId, objectName, "aa",
+            b2StorageClient.uploadSmallFile(B2UploadFileRequest.builder(bucketId, objectName, "text",
                             contentSource)
                     .build());
             log.info("File uploaded to b2 storage successfully");
