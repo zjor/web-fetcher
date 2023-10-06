@@ -1,0 +1,5 @@
+replicaCount: 1
+
+app: get-that-page-api
+image: zjor/get-that-page-api
+version:
