@@ -5,3 +5,11 @@ services:
     ports:
       - "4444:4444"
       - "7900:7900"
+  db:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: web-fetcher
+      POSTGRES_USER: web-fetcher
+      POSTGRES_PASSWORD: s3cr3t
