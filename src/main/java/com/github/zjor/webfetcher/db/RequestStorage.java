@@ -5,20 +5,26 @@ import jakarta.validation.Valid;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 @Component
 public class RequestStorage {
 
     private final Map<UUID, Request> requestDb = new HashMap<>();
-    private final Queue<UUID> requestQueue = new LinkedList<>();
+    private final BlockingQueue<UUID> requestQueue = new LinkedBlockingQueue<>();
 
     public boolean isEmptyQueue() {
-       return requestQueue.isEmpty();
+        return requestQueue.isEmpty();
     }
 
     public void addRequest(@Valid Request newRequest) {
-        requestDb.put(newRequest.getRequestId(), newRequest);
-        requestQueue.add(newRequest.getRequestId());
+        try {
+            requestDb.put(newRequest.getRequestId(), newRequest);
+            requestQueue.put(newRequest.getRequestId());
+        }catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Request getRequest(UUID requestId) {
@@ -29,11 +35,18 @@ public class RequestStorage {
         return requestDb.remove(requestId);
     }
 
-    public Request getNext() {
-        if (!requestQueue.isEmpty()) {
-            return requestDb.get(requestQueue.poll());
+    /**
+     * Blocks and waits for the next request to be available.
+     *
+     * @return
+     */
+    public Request take() {
+        try {
+            var reqId = requestQueue.take();
+            return requestDb.get(reqId);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
-        return null;
     }
 
 }

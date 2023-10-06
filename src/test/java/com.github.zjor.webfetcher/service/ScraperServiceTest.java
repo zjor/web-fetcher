@@ -51,7 +51,7 @@ class ScraperServiceTest {
 
         assertNotNull(actualRequest);
         assertNotNull(requestStorage.getRequest(requestId));
-        assertNotNull(requestStorage.getNext());
+        assertNotNull(requestStorage.take());
 
         assertEquals(WEBHOOK_URL, requestStorage.getRequest(requestId).getWebHookUrl());
         assertEquals(URL, requestStorage.getRequest(requestId).getUrlToDownload());

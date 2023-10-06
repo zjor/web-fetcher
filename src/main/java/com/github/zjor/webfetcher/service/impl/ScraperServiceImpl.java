@@ -6,6 +6,7 @@ import com.github.zjor.webfetcher.dto.Request;
 import com.github.zjor.webfetcher.dto.ScraperRequest;
 import com.github.zjor.webfetcher.dto.ScraperResponse;
 import com.github.zjor.webfetcher.enumeration.RequestStatus;
+import com.github.zjor.webfetcher.ext.spring.aop.Log;
 import com.github.zjor.webfetcher.service.BucketService;
 import com.github.zjor.webfetcher.service.QueueService;
 import com.github.zjor.webfetcher.service.ScraperService;
@@ -20,15 +21,18 @@ import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ScraperServiceImpl implements ScraperService {
+public class ScraperServiceImpl implements ScraperService, Runnable {
 
     private final BucketService bucketService;
     private final RequestStorage requestStorage;
     private final QueueService queueService;
+    private final ExecutorService executor = Executors.newFixedThreadPool(1);
 
     @Override
     public ScraperResponse submit(ScraperRequest apiRequest) {
@@ -41,19 +45,11 @@ public class ScraperServiceImpl implements ScraperService {
                 .build();
     }
 
+    @Log
     @Override
     @PostConstruct
     public void scrape() {
-        var thread = new Thread(() -> {
-            while (true) {
-                if (!requestStorage.isEmptyQueue()) {
-                    Optional.ofNullable(requestStorage.getNext())
-                            .ifPresent(queueService::processRequest);
-                }
-            }
-        });
-        thread.setDaemon(true);
-        thread.start();
+        executor.submit(this);
     }
 
     @Override
@@ -95,5 +91,13 @@ public class ScraperServiceImpl implements ScraperService {
                 .urlToDownload(apiRequest.getUrl())
                 .webHookUrl(apiRequest.getWebhookUrl())
                 .build());
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            var req = requestStorage.take();
+            queueService.processRequest(req);
+        }
     }
 }
