@@ -4,6 +4,7 @@ package com.github.zjor.webfetcher.controller;
 import com.github.zjor.webfetcher.dto.Request;
 import com.github.zjor.webfetcher.dto.ScraperRequest;
 import com.github.zjor.webfetcher.dto.ScraperResponse;
+import com.github.zjor.webfetcher.ext.spring.aop.Log;
 import com.github.zjor.webfetcher.service.ScraperService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,22 +23,22 @@ public class ScraperController {
 
     private final ScraperService service;
 
+    @Log
     @PostMapping("/submit")
     public ResponseEntity<ScraperResponse> submit(@RequestBody @Valid ScraperRequest request) {
-        log.info("Received submit request {}", request);
         return ResponseEntity.ok(service.submit(request));
     }
 
+    @Log
     @GetMapping("/id/{requestId}/status")
     public ResponseEntity<Request> status(@PathVariable UUID requestId,
                                           @RequestParam(required = false) Integer poll) {
-        log.info("Received status request with requestId {} and poll {}", requestId, poll);
         return ResponseEntity.ok(service.getStatus(requestId, poll));
     }
 
+    @Log
     @GetMapping(value = "/id/{requestId}/content", produces = MediaType.TEXT_HTML_VALUE)
     public ResponseEntity<String> content(@PathVariable UUID requestId) {
-        log.info("Received status request with requestId {}", requestId);
         return ResponseEntity.ok(service.getContent(requestId));
     }
 }
