@@ -17,10 +17,10 @@ import java.time.ZonedDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public class Auditable {
     @CreatedDate
-    @Column(nullable = false, updatable = false)
+    @Column(name = "created_date", nullable = false, updatable = false)
     private ZonedDateTime createdAt;
 
     @LastModifiedDate
-    @Column(nullable = false)
+    @Column(name = "last_modified_date", nullable = false)
     private ZonedDateTime updatedAt;
 }

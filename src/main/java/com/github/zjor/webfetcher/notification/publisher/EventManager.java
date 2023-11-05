@@ -1,6 +1,6 @@
 package com.github.zjor.webfetcher.notification.publisher;
 
-import com.github.zjor.webfetcher.dto.Request;
+import com.github.zjor.webfetcher.dto.RequestDto;
 import com.github.zjor.webfetcher.enumeration.EventType;
 import com.github.zjor.webfetcher.notification.listeners.EventListener;
 
@@ -28,8 +28,8 @@ public class EventManager {
         users.remove(listener);
     }
 
-    public void notify(EventType eventType, Request request) {
+    public void notify(EventType eventType, RequestDto requestDto) {
         var users = listeners.get(eventType);
-        users.forEach(listener -> listener.update(request));
+        users.forEach(listener -> listener.update(requestDto));
     }
 }

@@ -2,13 +2,14 @@ package com.github.zjor.webfetcher.service.impl;
 
 
 import com.github.zjor.webfetcher.db.RequestStorage;
-import com.github.zjor.webfetcher.dto.Request;
+import com.github.zjor.webfetcher.dto.RequestDto;
 import com.github.zjor.webfetcher.dto.ScraperRequest;
 import com.github.zjor.webfetcher.dto.ScraperResponse;
 import com.github.zjor.webfetcher.enumeration.RequestStatus;
 import com.github.zjor.webfetcher.ext.spring.aop.Log;
 import com.github.zjor.webfetcher.service.BucketService;
 import com.github.zjor.webfetcher.service.QueueService;
+import com.github.zjor.webfetcher.service.RequestService;
 import com.github.zjor.webfetcher.service.ScraperService;
 import io.netty.util.internal.StringUtil;
 import jakarta.annotation.PostConstruct;
@@ -32,13 +33,16 @@ public class ScraperServiceImpl implements ScraperService, Runnable {
     private final BucketService bucketService;
     private final RequestStorage requestStorage;
     private final QueueService queueService;
+
+    private final RequestService requestService;
+
     private final ExecutorService executor = Executors.newFixedThreadPool(1);
 
     @Override
     public ScraperResponse submit(ScraperRequest apiRequest) {
-        var id = UUID.randomUUID(); // TODO hashids
+        var id = UUID.randomUUID();
 
-        addToMemoryStorage(id, apiRequest);
+        createRequest(id, apiRequest);
 
         return ScraperResponse.builder()
                 .requestId(id)
@@ -53,7 +57,7 @@ public class ScraperServiceImpl implements ScraperService, Runnable {
     }
 
     @Override
-    public Request getStatus(UUID requestId, Integer poll) {
+    public RequestDto getStatus(UUID requestId, Integer poll) {
         var request = findRequest(requestId);
         Optional.ofNullable(poll)
                 .filter(p -> request.getStatus().equals(RequestStatus.processing))
@@ -79,18 +83,20 @@ public class ScraperServiceImpl implements ScraperService, Runnable {
         return new String(contentBytes, StandardCharsets.UTF_8);
     }
 
-    private Request findRequest(UUID requestId) {
+    private RequestDto findRequest(UUID requestId) {
         return Optional.ofNullable(requestStorage.getRequest(requestId))
                 .orElseThrow(() -> new NotFoundException(String.valueOf(requestId)));
     }
 
-    private void addToMemoryStorage(UUID id, ScraperRequest apiRequest) {
-        requestStorage.addRequest(Request.builder()
+    private void createRequest(UUID id, ScraperRequest apiRequest) {
+        var requestDto = RequestDto.builder()
                 .requestId(id)
                 .status(RequestStatus.pending)
                 .urlToDownload(apiRequest.getUrl())
                 .webHookUrl(apiRequest.getWebhookUrl())
-                .build());
+                .build();
+        requestStorage.addRequest(requestDto);
+        requestService.createRequest(requestDto.toModel());
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.github.zjor.webfetcher.client;
 
-import com.github.zjor.webfetcher.dto.Request;
+import com.github.zjor.webfetcher.dto.RequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
@@ -19,15 +19,15 @@ public class Client {
 
     private final RestTemplate restTemplate;
 
-    public ResponseEntity<String> sendPostRequest(String url, Request requestBody) {
+    public ResponseEntity<String> sendPostRequest(String url, RequestDto requestDtoBody) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        var requestEntity = new HttpEntity<>(requestBody, headers);
+        var requestEntity = new HttpEntity<>(requestDtoBody, headers);
         return restTemplate.postForEntity(url, requestEntity, String.class);
     }
 
-    public void sendStatusUpdate(Request request) {
-        Optional.ofNullable(request.getWebHookUrl())
-                .ifPresent(url -> sendPostRequest(url, request));
+    public void sendStatusUpdate(RequestDto requestDto) {
+        Optional.ofNullable(requestDto.getWebHookUrl())
+                .ifPresent(url -> sendPostRequest(url, requestDto));
     }
 }

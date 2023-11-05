@@ -1,7 +1,7 @@
 package com.github.zjor.webfetcher.notification.listeners.impl;
 
 import com.github.zjor.webfetcher.client.Client;
-import com.github.zjor.webfetcher.dto.Request;
+import com.github.zjor.webfetcher.dto.RequestDto;
 import com.github.zjor.webfetcher.enumeration.EventType;
 import com.github.zjor.webfetcher.notification.listeners.EventListener;
 import com.github.zjor.webfetcher.notification.publisher.EventManager;
@@ -21,9 +21,9 @@ public class WebHookNotificationListener implements EventListener {
     }
 
     @Override
-    public void update(Request request) {
+    public void update(RequestDto requestDto) {
         try {
-            client.sendStatusUpdate(request);
+            client.sendStatusUpdate(requestDto);
         } catch (ResourceAccessException e) {
             log.error("WebHook notification failed");
         }

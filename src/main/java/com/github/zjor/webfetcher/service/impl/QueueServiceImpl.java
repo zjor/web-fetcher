@@ -2,7 +2,7 @@ package com.github.zjor.webfetcher.service.impl;
 
 
 import com.github.zjor.webfetcher.driver.Driver;
-import com.github.zjor.webfetcher.dto.Request;
+import com.github.zjor.webfetcher.dto.RequestDto;
 import com.github.zjor.webfetcher.enumeration.RequestStatus;
 import com.github.zjor.webfetcher.notification.editor.Editor;
 import com.github.zjor.webfetcher.property.ScrapeProperty;
@@ -24,24 +24,24 @@ public class QueueServiceImpl implements QueueService {
     private final BucketService bucketService;
 
     @Override
-    public void processRequest(Request request) {
-        editor.changeStatus(RequestStatus.processing, request);
+    public void processRequest(RequestDto requestDto) {
+        editor.changeStatus(RequestStatus.processing, requestDto);
         var start = Instant.now();
 
         try (var driver = Driver.driverBuilder(property)) {
-            var filename = String.format("%s.html", request.getRequestId());
-            var source = driver.fetchPageSource(request.getUrlToDownload());
+            var filename = String.format("%s.html", requestDto.getRequestId());
+            var source = driver.fetchPageSource(requestDto.getUrlToDownload());
 
-            request.setDownloadUrl(bucketService.uploadFile(filename, source.getBytes()));
-            editor.changeStatus(RequestStatus.ready, request);
+            requestDto.setDownloadUrl(bucketService.uploadFile(filename, source.getBytes()));
+            editor.changeStatus(RequestStatus.ready, requestDto);
 
         } catch (Exception e) {
-            request.setError(Request.Error.builder()
+            requestDto.setError(RequestDto.Error.builder()
                     .code("BAD_URL")
                     .message(e.getMessage())
                     .build());
-            editor.changeStatus(RequestStatus.failed, request);
-            log.error("Something went wrong when fetching the page source");
+            editor.changeStatus(RequestStatus.failed, requestDto);
+            log.error("Something went wrong when fetching the page source. Error: {}", e.getMessage());
 
         } finally {
             var end = Instant.now();

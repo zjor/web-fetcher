@@ -13,7 +13,7 @@ bucket:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/db
+    url: jdbc:postgresql://localhost:5432/web-fetcher
     username: web-fetcher
     password: s3cr3t
     driver-class-name: org.postgresql.Driver
@@ -21,4 +21,3 @@ spring:
     enabled: true
     out-of-order: true
     schemas: public
-    baselineOnMigrate: true

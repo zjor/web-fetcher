@@ -3,6 +3,7 @@ package com.github.zjor.webfetcher.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.github.zjor.webfetcher.enumeration.RequestStatus;
+import com.github.zjor.webfetcher.model.Request;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Request {
+public class RequestDto {
 
     @NotNull
     private UUID requestId;
@@ -37,5 +38,13 @@ public class Request {
     public static class Error {
         private String code;
         private String message;
+    }
+
+    public Request toModel() {
+        return Request.builder()
+                .url(urlToDownload)
+                .lastStatus(status)
+                .webhook_url(webHookUrl)
+                .build();
     }
 }

@@ -1,8 +1,8 @@
 package com.github.zjor.webfetcher.service;
 
-import com.github.zjor.webfetcher.dto.Request;
+import com.github.zjor.webfetcher.dto.RequestDto;
 
 public interface QueueService {
 
-    void processRequest(Request request);
+    void processRequest(RequestDto requestDto);
 }

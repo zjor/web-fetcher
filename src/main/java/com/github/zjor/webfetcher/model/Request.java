@@ -1,12 +1,15 @@
 package com.github.zjor.webfetcher.model;
 
+import com.github.zjor.webfetcher.enumeration.RequestStatus;
 import com.github.zjor.webfetcher.model.base.Auditable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,7 +29,8 @@ public class Request extends Auditable {
   private String webhook_url;
 
   @Column(name = "last_status")
-  private String lastStatus;
+  @Enumerated(value = EnumType.STRING)
+  private RequestStatus lastStatus;
 
   @Column(name = "error")
   private String error;

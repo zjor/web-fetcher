@@ -1,6 +1,6 @@
 package com.github.zjor.webfetcher.notification.editor;
 
-import com.github.zjor.webfetcher.dto.Request;
+import com.github.zjor.webfetcher.dto.RequestDto;
 import com.github.zjor.webfetcher.enumeration.EventType;
 import com.github.zjor.webfetcher.enumeration.RequestStatus;
 import com.github.zjor.webfetcher.notification.publisher.EventManager;
@@ -13,10 +13,13 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class Editor {
     public final EventManager events;
+//    private final RequestService requestService; doesnt work with thread executor
 
-    public void changeStatus(RequestStatus status, Request request) {
-       request.setStatus(status);
-       log.info("Request with id {} set to status {}", request.getRequestId(), status);
-       events.notify(EventType.WEBHOOK, request);
+    public void changeStatus(RequestStatus status, RequestDto requestDto) {
+       requestDto.setStatus(status);
+//       requestService.updateRequestStatus(requestDto.getRequestId(), status);
+
+       log.info("Request with id {} set to status {}", requestDto.getRequestId(), status);
+       events.notify(EventType.WEBHOOK, requestDto);
     }
 }
