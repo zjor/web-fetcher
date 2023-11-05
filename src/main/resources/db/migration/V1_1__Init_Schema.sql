@@ -1,6 +1,6 @@
 create table if not exists request
 (
-    id                 bigserial not null,
+    id                 uuid not null,
     created_date       timestamp not null,
     last_modified_date timestamp not null,
     url                text      not null,

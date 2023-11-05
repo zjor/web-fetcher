@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @Builder
 @Entity
@@ -16,8 +18,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "request")
 public class Request extends Auditable {
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  private UUID id;
 
   @Column(name = "url")
   private String url;

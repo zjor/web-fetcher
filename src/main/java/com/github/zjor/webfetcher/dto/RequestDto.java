@@ -42,6 +42,7 @@ public class RequestDto {
 
     public Request toModel() {
         return Request.builder()
+                .id(requestId)
                 .url(urlToDownload)
                 .lastStatus(status)
                 .webhook_url(webHookUrl)
