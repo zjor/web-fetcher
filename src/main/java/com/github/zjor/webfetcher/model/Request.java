@@ -1,5 +1,7 @@
 package com.github.zjor.webfetcher.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.github.zjor.webfetcher.enumeration.RequestStatus;
 import com.github.zjor.webfetcher.model.base.Auditable;
 import jakarta.persistence.*;
@@ -16,18 +18,25 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "request")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Request extends Auditable {
   @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
+  @JsonIgnore
   @Column(name = "url")
   private String url;
 
   @Column(name = "content_length")
   private Integer contentLength;
 
+  @Column(name = "download_url")
+  private String downloadUrl;
+
+  @JsonIgnore
   @Column(name = "webhook_url")
-  private String webhook_url;
+  private String webhookUrl;
 
   @Column(name = "last_status")
   @Enumerated(value = EnumType.STRING)

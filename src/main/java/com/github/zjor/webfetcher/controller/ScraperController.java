@@ -1,10 +1,10 @@
 package com.github.zjor.webfetcher.controller;
 
 
-import com.github.zjor.webfetcher.dto.RequestDto;
 import com.github.zjor.webfetcher.dto.ScraperRequest;
 import com.github.zjor.webfetcher.dto.ScraperResponse;
 import com.github.zjor.webfetcher.ext.spring.aop.Log;
+import com.github.zjor.webfetcher.model.Request;
 import com.github.zjor.webfetcher.service.ScraperService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,8 +31,8 @@ public class ScraperController {
 
     @Log
     @GetMapping("/id/{requestId}/status")
-    public ResponseEntity<RequestDto> status(@PathVariable UUID requestId,
-                                             @RequestParam(required = false) Integer poll) {
+    public ResponseEntity<Request> status(@PathVariable UUID requestId,
+                                          @RequestParam(required = false) Integer poll) {
         return ResponseEntity.ok(service.getStatus(requestId, poll));
     }
 

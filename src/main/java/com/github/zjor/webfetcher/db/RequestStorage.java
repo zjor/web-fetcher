@@ -1,51 +1,40 @@
 package com.github.zjor.webfetcher.db;
 
-import com.github.zjor.webfetcher.dto.RequestDto;
+import com.github.zjor.webfetcher.model.Request;
+import com.github.zjor.webfetcher.service.RequestService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 @Component
 public class RequestStorage {
+    private final BlockingQueue<UUID> requestQueue;
+    private final RequestService requestService;
 
-    private final Map<UUID, RequestDto> requestDb = new HashMap<>();
-    private final BlockingQueue<UUID> requestQueue = new LinkedBlockingQueue<>();
+    public RequestStorage(RequestService requestService) {
+        this.requestQueue = new LinkedBlockingQueue<>();;
+        this.requestService = requestService;
+    }
 
     public boolean isEmptyQueue() {
         return requestQueue.isEmpty();
     }
 
-    public void addRequest(@Valid RequestDto newRequest) {
+    public void addRequest(@Valid Request request) {
         try {
-            requestDb.put(newRequest.getRequestId(), newRequest);
-            requestQueue.put(newRequest.getRequestId());
+            requestQueue.put(request.getId());
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public RequestDto getRequest(UUID requestId) {
-        return requestDb.get(requestId);
-    }
-
-    public RequestDto removeRequest(UUID requestId) {
-        return requestDb.remove(requestId);
-    }
-
-    /**
-     * Blocks and waits for the next request to be available.
-     *
-     * @return
-     */
-    public RequestDto take() {
+    public Request take() {
         try {
             var reqId = requestQueue.take();
-            return requestDb.get(reqId);
+            return requestService.findRequest(reqId);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
