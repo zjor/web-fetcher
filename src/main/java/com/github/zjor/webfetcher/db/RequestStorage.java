@@ -1,49 +1,40 @@
 package com.github.zjor.webfetcher.db;
 
-import com.github.zjor.webfetcher.dto.Request;
+import com.github.zjor.webfetcher.model.Request;
+import com.github.zjor.webfetcher.service.RequestService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 @Component
 public class RequestStorage {
+    private final BlockingQueue<UUID> requestQueue;
+    private final RequestService requestService;
 
-    private final Map<UUID, Request> requestDb = new HashMap<>();
-    private final BlockingQueue<UUID> requestQueue = new LinkedBlockingQueue<>();
+    public RequestStorage(RequestService requestService) {
+        this.requestQueue = new LinkedBlockingQueue<>();;
+        this.requestService = requestService;
+    }
 
     public boolean isEmptyQueue() {
         return requestQueue.isEmpty();
     }
 
-    public void addRequest(@Valid Request newRequest) {
+    public void addRequest(@Valid Request request) {
         try {
-            requestDb.put(newRequest.getRequestId(), newRequest);
-            requestQueue.put(newRequest.getRequestId());
-        }catch (InterruptedException e) {
+            requestQueue.put(request.getId());
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public Request getRequest(UUID requestId) {
-        return requestDb.get(requestId);
-    }
-
-    public Request removeRequest(UUID requestId) {
-        return requestDb.remove(requestId);
-    }
-
-    /**
-     * Blocks and waits for the next request to be available.
-     *
-     * @return
-     */
     public Request take() {
         try {
             var reqId = requestQueue.take();
-            return requestDb.get(reqId);
+            return requestService.findRequest(reqId);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

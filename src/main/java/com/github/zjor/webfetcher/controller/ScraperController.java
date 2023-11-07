@@ -1,10 +1,10 @@
 package com.github.zjor.webfetcher.controller;
 
 
-import com.github.zjor.webfetcher.dto.Request;
 import com.github.zjor.webfetcher.dto.ScraperRequest;
 import com.github.zjor.webfetcher.dto.ScraperResponse;
 import com.github.zjor.webfetcher.ext.spring.aop.Log;
+import com.github.zjor.webfetcher.model.Request;
 import com.github.zjor.webfetcher.service.ScraperService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

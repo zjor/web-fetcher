@@ -11,3 +11,13 @@ bucket:
   key-name: webfetcherkey
   application-key: K005GSWeK/OTB+fiQjJ52syE/Qf13Zo
 
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/web-fetcher
+    username: web-fetcher
+    password: s3cr3t
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    enabled: true
+    out-of-order: true
+    schemas: public
