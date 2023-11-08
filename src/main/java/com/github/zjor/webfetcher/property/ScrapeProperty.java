@@ -7,6 +7,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record ScrapeProperty(String sourceFilePath,
                              Driver driver) {
 
-    public static record Driver(String url, String headless) {
+    public record Driver(String url, String headless) {
     }
 }

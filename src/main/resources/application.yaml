@@ -6,9 +6,7 @@ scraper:
 bucket:
   id: c70b4eb3dec4dd7a89a0081c
   name: webfetcher
-  region: us-west-002
   key-id: 0057be3e4da908c0000000002
-  key-name: webfetcherkey
   application-key: K005GSWeK/OTB+fiQjJ52syE/Qf13Zo
 
 spring:

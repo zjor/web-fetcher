@@ -22,6 +22,8 @@ spec:
           ports:
             - containerPort: 8080
           env:
+            - name: SCRAPER_DRIVER_URL
+              value: http://46.36.36.82:4444/wd/hub
             - name: VCS_REF
               value: {{ .Values.version | quote }}
           livenessProbe:
