@@ -17,7 +17,7 @@ import java.util.UUID;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "request")
+@Table(name = "requests")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Request extends Auditable {
   @Id
