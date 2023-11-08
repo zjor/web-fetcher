@@ -1,4 +1,4 @@
-create table if not exists request
+create table if not exists requests
 (
     id                 uuid      not null,
     created_date       timestamp not null,
